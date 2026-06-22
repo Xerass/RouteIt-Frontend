@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
+/* Platform theme tokens — ported from the original traffic-reader style.
+   Dark UI, JetBrains Mono, accent green. Exposed to Tailwind via @theme so
+   utilities like bg-panel / text-accent / border-border work. */
+@theme {
+  --color-bg: #111318;
+  --color-panel: #181b22;
+  --color-panel-raised: #1e2129;
+  --color-border: #272b36;
+  --color-border-subtle: #1f232d;
+  --color-text: #d4d7e0;
+  --color-text-mid: #969bb0;
+  --color-text-dim: #5c6175;
+  --color-accent: #47d98a;
+  --color-accent-muted: #33a56a;
+  --color-danger: #d94e4e;
+  --color-warm: #e8c56d;
+
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+/* rgba glows + muted danger fill (kept as raw vars for arbitrary-value use) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --accent-glow: rgba(71, 217, 138, 0.12);
+  --accent-glow-strong: rgba(71, 217, 138, 0.25);
+  --danger-muted: rgba(217, 78, 78, 0.08);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* thin scrollbar for scrollable panels (matches the original analytics panel) */
+.scrollbar-thin::-webkit-scrollbar { width: 3px; }
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
 }

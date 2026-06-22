@@ -1,0 +1,702 @@
+/* Alias the W1 token names onto routeit's platform theme (globals define
+   --color-*). Lets the ported class styles keep using var(--accent) etc.
+   without a second hard-coded source of truth, or leaking a global :root. */
+:root {
+    --bg: var(--color-bg);
+    --panel: var(--color-panel);
+    --panel-raised: var(--color-panel-raised);
+    --border: var(--color-border);
+    --border-subtle: var(--color-border-subtle);
+    --text: var(--color-text);
+    --text-mid: var(--color-text-mid);
+    --text-dim: var(--color-text-dim);
+    --accent: var(--color-accent);
+    --accent-muted: var(--color-accent-muted);
+    --danger: var(--color-danger);
+    --warm: var(--color-warm);
+    /* --accent-glow, --accent-glow-strong, --danger-muted already exist in routeit globals */
+}
+
+/* page layout wrapper — replaces the standalone app's global body rule, which
+   would otherwise force display:flex/height:100vh onto EVERY page's <body> */
+.ro-root { display: flex; height: 100vh; overflow: hidden; }
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 360px;
+    min-width: 360px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    position: relative;
+    transition: margin-left 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar.collapsed {
+    margin-left: -360px;
+}
+
+.sidebar-toggle {
+    position: absolute;
+    top: 16px;
+    right: -36px;
+    width: 32px;
+    height: 32px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    color: var(--text-mid);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    z-index: 1001;
+    transition: color 0.15s, background 0.15s;
+}
+
+.sidebar-toggle:hover {
+    color: var(--accent);
+    background: var(--panel-raised);
+}
+
+.sidebar.collapsed .sidebar-toggle i {
+    transform: rotate(180deg);
+}
+
+.sidebar-toggle i {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 24px 22px 20px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--panel-raised) 0%, var(--panel) 100%);
+}
+
+.sidebar-header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.3px;
+}
+
+.sidebar-header h1::before {
+    content: "//";
+    color: var(--text-dim);
+    margin-right: 6px;
+}
+
+.sidebar-header p {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+/* --- Search --- */
+.search-section {
+    padding: 16px 22px 0;
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.search-box input::placeholder { color: var(--text-dim); }
+.search-box input:focus { border-color: var(--accent-muted); }
+
+.search-results {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    top: 54px;
+    background: var(--panel-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 2000;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.search-results.visible { display: block; }
+
+.search-results::-webkit-scrollbar { width: 3px; }
+.search-results::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: var(--border); }
+
+.search-result-icon {
+    font-size: 14px;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.search-result-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.search-result-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-type {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- POI markers --- */
+.poi-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--panel-raised);
+    border: 1.5px solid var(--border);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.poi-marker i {
+    font-size: 10px;
+    color: var(--text-mid);
+}
+
+.poi-marker:hover { transform: scale(1.3); }
+.poi-marker:hover i { color: var(--accent); }
+
+/* --- Controls --- */
+.controls {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toggle-row label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-mid);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* bugfix: input was 0x0 so clicks never reached it */
+.switch {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+    margin: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border);
+    border-radius: 12px;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--text-dim);
+    border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.switch input:checked + .slider {
+    background: var(--accent-muted);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(18px);
+    background: var(--accent);
+}
+
+/* --- Buttons --- */
+.btn-row {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-row .btn { flex: 1; }
+
+.btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.btn-primary:hover {
+    background: var(--accent-muted);
+    box-shadow: 0 2px 20px var(--accent-glow-strong);
+}
+
+.btn-primary:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.btn-danger {
+    background: var(--danger-muted);
+    color: var(--danger);
+    border: 1px solid rgba(217, 78, 78, 0.2);
+}
+
+.btn-danger:hover {
+    background: var(--danger);
+    color: #fff;
+    border-color: var(--danger);
+}
+
+/* --- Waypoint list --- */
+.waypoint-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 22px;
+}
+
+.waypoint-list::-webkit-scrollbar { width: 3px; }
+.waypoint-list::-webkit-scrollbar-track { background: transparent; }
+.waypoint-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.waypoint-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 10px;
+    margin: 3px 0;
+    border-radius: 8px;
+    font-size: 12px;
+    background: transparent;
+    transition: background 0.15s;
+}
+
+.waypoint-item:hover {
+    background: var(--panel-raised);
+}
+
+.waypoint-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.waypoint-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.waypoint-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.waypoint-coords-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: -0.2px;
+    margin-top: 1px;
+}
+
+.waypoint-coords {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--text-mid);
+    flex: 1;
+    letter-spacing: -0.2px;
+}
+
+/* --- Start/End role buttons --- */
+.waypoint-role-btns {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.role-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 10px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.15s;
+}
+
+.role-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+
+.role-btn.active-start {
+    color: var(--accent);
+    border-color: var(--accent-muted);
+    background: var(--accent-glow);
+}
+
+.role-btn.active-end {
+    color: var(--danger);
+    border-color: var(--danger);
+    background: var(--danger-muted);
+}
+
+.waypoint-item.is-start .waypoint-number {
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow-strong);
+}
+
+.waypoint-item.is-end .waypoint-number {
+    background: var(--danger);
+    box-shadow: 0 0 12px rgba(217, 78, 78, 0.25);
+}
+
+.waypoint-remove {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 18px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.15s;
+}
+
+.waypoint-remove:hover {
+    color: var(--danger);
+    background: var(--danger-muted);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* --- Route stats --- */
+.route-stats {
+    padding: 16px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--panel-raised);
+    display: none;
+}
+
+.route-stats.visible { display: block; }
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    padding: 5px 0;
+}
+
+.stat-label {
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+.stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* --- Conditions panel --- */
+.conditions-panel {
+    padding: 16px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--panel-raised);
+    display: none;
+    overflow-y: auto;
+    max-height: 280px;
+}
+
+.conditions-panel.visible { display: block; }
+
+.conditions-header {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+}
+
+.conditions-waypoints {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.cond-waypoint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: var(--panel);
+    border: 1px solid var(--border-subtle);
+}
+
+.cond-wp-number {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.cond-wp-detail {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.cond-wp-weather {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.cond-wp-sub {
+    font-size: 10px;
+    color: var(--text-dim);
+}
+
+.cond-wp-penalty {
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.cond-wp-penalty.penalty-ok { color: var(--accent); }
+.cond-wp-penalty.penalty-mid { color: var(--warm); }
+.cond-wp-penalty.penalty-high { color: var(--danger); }
+
+.conditions-adjusted {
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+}
+
+/* --- Status bar --- */
+.status-bar {
+    padding: 12px 22px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    background: var(--bg);
+    letter-spacing: 0.2px;
+}
+
+.status-bar.loading {
+    color: var(--accent);
+}
+
+.status-bar.loading::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 8px;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.status-bar.error { color: var(--danger); }
+
+/* --- Map --- */
+#map {
+    flex: 1;
+    height: 100vh;
+}
+
+.leaflet-tile-pane { filter: saturate(0.85) brightness(0.95); }
+
+/* marker */
+.custom-marker {
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    box-shadow: 0 0 10px var(--accent-glow-strong);
+}
+
+.custom-marker-label {
+    position: absolute;
+    top: -9px;
+    left: 18px;
+    background: var(--panel-raised);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* POI tooltip */
+.poi-tooltip {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px !important;
+    background: var(--panel-raised) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 6px !important;
+    padding: 4px 10px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.poi-tooltip::before {
+    border-top-color: var(--border) !important;
+}
+
+/* override leaflet controls to match theme */
+.leaflet-control-zoom a {
+    background: var(--panel-raised) !important;
+    color: var(--text-mid) !important;
+    border-color: var(--border) !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background: var(--border) !important;
+    color: var(--text) !important;
+}
+
+.leaflet-control-attribution {
+    background: rgba(17, 19, 24, 0.7) !important;
+    color: var(--text-dim) !important;
+    font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+    color: var(--text-dim) !important;
+}
