@@ -1,9 +1,9 @@
 //traffic-reader service API client.
 
-import { API_BASE, errorMessage } from "./api";
+import { API_BASE, errorMessage } from "./apiClient";
 
 //re-export so consumers building feed URLs can do `api.absolute(...)`
-export { absolute } from "./api";
+export { absolute } from "./apiClient";
 
 const TR = `${API_BASE}/traffic-reader`;
 

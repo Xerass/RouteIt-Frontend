@@ -1,5 +1,5 @@
 //route_optimizer service API client.
-import {API_BASE, absolute} from "./api";
+import {API_BASE, absolute} from "./apiClient";
 
 export interface WaypointWeather {
   waypoint: number;
