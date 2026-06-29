@@ -1,4 +1,3 @@
-import { DataArrayTexture } from "three";
 import { API_BASE, errorMessage} from "./apiClient";
 
 //match expected json

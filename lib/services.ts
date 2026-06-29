@@ -24,5 +24,11 @@ export const SERVICES: ServiceLink[] = [
     description: "Plan multi-stop driving routes with TSP optimization and live weather penalties.",
     icon: "fa-solid fa-route",
     href: "/route-optimizer",
+  },
+  {
+    name: "Package Damage Detector",
+    description: "Classify a package photo as damaged or intact",
+    icon: "fa-solid fa-box-open",
+    href: "/damaged-packages"
   }
 ];

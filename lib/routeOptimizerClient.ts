@@ -1,5 +1,20 @@
 //route_optimizer service API client.
-import {API_BASE, absolute} from "./apiClient";
+import {API_BASE, absolute, errorMessage} from "./apiClient";
+
+//selectable map locations (POIs), served from Postgres by the backend. Same
+//shape the old public/route-optimizer/locations.json used.
+export interface Location {
+  name: string;
+  type: string;
+  lat: number;
+  lon: number;
+}
+
+export async function fetchLocations(): Promise<Location[]> {
+  const res = await fetch(`${API_BASE}/route-optimizer/locations`);
+  if (!res.ok) throw new Error(await errorMessage(res, "Failed to load locations"));
+  return res.json();
+}
 
 export interface WaypointWeather {
   waypoint: number;
