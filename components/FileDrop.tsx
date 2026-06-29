@@ -9,11 +9,15 @@ export default function FileDrop({
   hint,
   fileName,
   onFile,
+  label = "Drop a file or click to browse",
+  icon = "fa-cloud-arrow-up",
 }: {
   accept: string;
   hint: string;
   fileName: string;
   onFile: (file: File) => void;
+  label?: string;
+  icon?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -40,19 +44,20 @@ export default function FileDrop({
         }`}
       >
         <i
-          className={`fa-solid fa-cloud-arrow-up text-2xl transition-colors ${
+          className={`fa-solid ${icon} text-2xl transition-colors ${
             dragOver ? "text-accent" : "text-text-dim group-hover:text-accent"
           }`}
         />
-        <span className="text-[12.5px] text-text-dim">
-          Drop video or click to browse
-        </span>
+        <span className="text-[12.5px] text-text-dim">{label}</span>
         <span className="text-[10px] text-text-dim opacity-60">{hint}</span>
         <input
           ref={inputRef}
           type="file"
           accept={accept}
-          className="absolute inset-0 cursor-pointer opacity-0"
+          // pointer-events-none so a click passes through to the wrapper's
+          // onClick (which opens the dialog once); without this the click also
+          // hits the input directly and the file dialog opens twice.
+          className="pointer-events-none absolute inset-0 opacity-0"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) onFile(file);

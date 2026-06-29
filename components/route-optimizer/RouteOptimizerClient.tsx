@@ -5,13 +5,12 @@ import Link from "next/link";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./route-optimizer.css";
-import { submitRoute, pollRoute, type RouteResult, type WaypointWeather } from "@/lib/routeOptimizer";
+import { submitRoute, pollRoute, fetchLocations, type RouteResult, type WaypointWeather } from "@/lib/routeOptimizerClient";
 
 type Pt = [number, number]; // [lon, lat]
 interface Poi { name: string; type: string; lat: number; lon: number; }
 
 const MAX_WP = 8;
-const POI_DATA_URL = "/route-optimizer/locations.json";
 
 const POI_ICONS: Record<string, string> = {
   airport: "fa-plane", stadium: "fa-futbol", mall: "fa-cart-shopping",
@@ -182,9 +181,9 @@ export default function RouteOptimizerClient() {
     map.on("moveend", updatePoiMarkers);
     map.on("click", (e) => cbRef.current.onMapClick?.(e as L.LeafletMouseEvent));
 
-    fetch(POI_DATA_URL)
-      .then((r) => r.json())
-      .then((data: Poi[]) => { if (!cancelled) { allPoisRef.current = data; updatePoiMarkers(); } });
+    fetchLocations()
+      .then((data) => { if (!cancelled) { allPoisRef.current = data; updatePoiMarkers(); } })
+      .catch((err) => { if (!cancelled) setStatusMsg(err.message, "error"); });
 
     // resize map whenever its container changes (sidebar collapse, window resize)
     const ro = new ResizeObserver(() => map.invalidateSize());
