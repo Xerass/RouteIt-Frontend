@@ -6,8 +6,8 @@ import ModeTabs, { type ModeTab } from "@/components/ModeTabs";
 import FileDrop from "@/components/FileDrop";
 import AnalyticsPanel, { type AnalyticsRow } from "@/components/AnalyticsPanel";
 import StatusBar, { type StatusType } from "@/components/StatusBar";
-import * as api from "@/lib/trafficReader";
-import type { TrafficStatus } from "@/lib/trafficReader";
+import * as api from "@/lib/trafficReaderClient";
+import type { TrafficStatus } from "@/lib/trafficReaderClient";
 
 type Mode = "upload" | "stream";
 type View = "idle" | "calibrating" | "feeding" | "ended";
@@ -275,6 +275,7 @@ export default function TrafficReaderPage() {
           <FileDrop
             accept=".mp4,.avi,.mov,.mkv,.webm"
             hint=".mp4 .avi .mov .mkv .webm"
+            label="Drop a video or click to browse"
             fileName={file?.name ?? ""}
             onFile={setFile}
           />
