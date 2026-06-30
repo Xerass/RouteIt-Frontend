@@ -7,6 +7,12 @@ import AnalyticsPanel, { type AnalyticsRow } from "@/components/AnalyticsPanel";
 import StatusBar, { type StatusType } from "@/components/StatusBar";
 import * as api from "@/lib/damagedPackagesClient";
 import type { DamageResult } from "@/lib/damagedPackagesClient";
+import dynamic from "next/dynamic";
+
+const ServiceBackground = dynamic(
+  () => import("@/components/backgrounds/ServiceBackground"),
+  { ssr: false },
+);
 
 export default function DamagedPackagesPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -71,6 +77,7 @@ export default function DamagedPackagesPage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
+      <ServiceBackground />
       <Sidebar
         title="damaged-packages"
         subtitle="Upload a package photo to classify it as damaged or intact."
@@ -106,9 +113,9 @@ export default function DamagedPackagesPage() {
         <StatusBar message={status.msg} type={status.type} />
       </Sidebar>
 
-      <div className="relative flex h-screen flex-1 items-center justify-center bg-bg p-8">
+      <div className="relative flex h-screen flex-1 items-center justify-center bg-bg/60 p-8">
         {!previewUrl && (
-          <div className="flex flex-col items-center gap-4 text-text-dim">
+          <div className="flex flex-col items-center gap-4 text-text-mid drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
             <i className="fa-solid fa-box-open text-5xl" />
             <span className="text-sm">No image selected</span>
           </div>

@@ -8,6 +8,12 @@ import AnalyticsPanel, { type AnalyticsRow } from "@/components/AnalyticsPanel";
 import StatusBar, { type StatusType } from "@/components/StatusBar";
 import * as api from "@/lib/trafficReaderClient";
 import type { TrafficStatus } from "@/lib/trafficReaderClient";
+import dynamic from "next/dynamic";
+
+const ServiceBackground = dynamic(
+  () => import("@/components/backgrounds/ServiceBackground"),
+  { ssr: false },
+);
 
 type Mode = "upload" | "stream";
 type View = "idle" | "calibrating" | "feeding" | "ended";
@@ -261,6 +267,7 @@ export default function TrafficReaderPage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
+      <ServiceBackground />
       <Sidebar
         title="traffic-reader"
         subtitle="Upload a video or connect a live stream for real-time vehicle detection."
@@ -331,10 +338,10 @@ export default function TrafficReaderPage() {
       {/* feed area */}
       <div
         ref={feedAreaRef}
-        className="relative flex h-screen flex-1 items-center justify-center overflow-hidden bg-bg"
+        className="relative flex h-screen flex-1 items-center justify-center overflow-hidden bg-bg/60"
       >
         {view === "idle" && (
-          <div className="flex flex-col items-center gap-4 text-text-dim">
+          <div className="flex flex-col items-center gap-4 text-text-mid drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
             <i className="fa-solid fa-video text-5xl" />
             <span className="text-sm">No active feed</span>
           </div>

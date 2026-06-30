@@ -30,5 +30,11 @@ export const SERVICES: ServiceLink[] = [
     description: "Classify a package photo as damaged or intact",
     icon: "fa-solid fa-box-open",
     href: "/damaged-packages"
-  }
+  },
+  {
+    name: "Driver Behavior",
+    description: "Score a driver's trip log and break down what drives the score.",
+    icon: "fa-solid fa-gauge-high",
+    href: "/driver-behavior",
+  },
 ];
